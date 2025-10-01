@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: demo
+
+  data:
+    mongodb:
+      uri: "mongodb://localhost:27017/ArchisketchDB"
+
+aws:
+  cdn:
+    url: "https://dev-resources.archisketch.com"
+  s3:
+    region: "ap-northeast-2"
+    bucket:
+      name: "dev-archisketch-resources"
+  access:
+    key: 1
+  secret:
+    key: 1

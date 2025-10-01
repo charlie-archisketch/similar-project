@@ -1,0 +1,14 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:3.6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    restart: always
+    environment:
+      MONGO_HOST: localhost
+      MONGO_PORT: 27017
+      MONGO_INITDB_DATABASE: archisketch_internal_db
+    volumes:
+      - "./docker/mongo:/data/internal_db"
