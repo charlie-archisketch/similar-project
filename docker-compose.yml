@@ -1,14 +1,14 @@
 version: "3"
 services:
-  mongo:
-    image: mongo:3.6
-    container_name: mongo
+  postgres:
+    image: postgres:18-alpine
+    container_name: similar_projects.postgres
     ports:
-      - "27017:27017"
+      - "5432:5432"
     restart: always
     environment:
-      MONGO_HOST: localhost
-      MONGO_PORT: 27017
-      MONGO_INITDB_DATABASE: archisketch_internal_db
+      POSTGRES_USER: archisketch
+      POSTGRES_PASSWORD: archisketch
+      POSTGRES_DB: archisketch_db
     volumes:
-      - "./docker/mongo:/data/internal_db"
+      - "./docker/postgres:/var/lib/postgresql/18/docker" # Data path changed after Postgresql 18

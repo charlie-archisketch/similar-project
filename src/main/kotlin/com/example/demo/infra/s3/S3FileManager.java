@@ -23,10 +23,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -268,7 +272,20 @@ public class S3FileManager {
     }
 
     public boolean isObjExist(String key) {
-        return s3client.doesObjectExist(bucketName, key);
+        RestClient client = RestClient.builder()
+                .baseUrl("https://dev-resources.archisketch.com")
+                .build();
+        try {
+            HttpStatusCode status = client.get()
+                    .uri("/{key}", key)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .getStatusCode();
+
+            return status.is2xxSuccessful();
+        } catch (HttpClientErrorException.NotFound e) {
+            return false;
+        }
     }
 
     public boolean isDirectoryExist(String key) {

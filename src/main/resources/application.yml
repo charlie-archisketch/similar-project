@@ -2,17 +2,36 @@ spring:
   application:
     name: demo
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/archisketch_db
+    driver-class-name: org.postgresql.Driver
+    username: archisketch
+    password: archisketch
+
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        create_empty_composites:
+          enabled: true
+
+    generate-ddl: true
+    hibernate:
+      ddl-auto: validate
+
   data:
     mongodb:
-      uri: "mongodb://localhost:27017/ArchisketchDB"
+      uri: mongodb://localhost:27017/ArchisketchDB
 
 aws:
   cdn:
-    url: "https://dev-resources.archisketch.com"
+    url: https://dev-resources.archisketch.com
   s3:
-    region: "ap-northeast-2"
+    region: ap-northeast-2
     bucket:
-      name: "dev-archisketch-resources"
+      name: dev-archisketch-resources
   access:
     key: 1
   secret:
