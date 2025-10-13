@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("plugin.lombok") version "1.9.25"
-//    kotlin("kapt") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
 }
 
 group = "com.example"
@@ -44,10 +44,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
-//    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
-//    kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
-//    kapt("jakarta.annotation:jakarta.annotation-api")
-//    kapt("jakarta.persistence:jakarta.persistence-api")
+    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
+    kapt("jakarta.annotation:jakarta.annotation-api:2.1.1")
+    kapt("jakarta.persistence:jakarta.persistence-api:3.1.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -102,16 +102,6 @@ tasks.withType<Test>().configureEach {
     )
 }
 
-//val generated = file("src/main/generated")
-//
-//tasks.withType<JavaCompile> {
-//    options.generatedSourceOutputDirectory.set(generated)
-//}
-//
-//tasks.named("clean") {
-//    doLast {
-//        generated.deleteRecursively()
-//    }
-//}
-
-
+kapt {
+    keepJavacAnnotationProcessors = true
+}

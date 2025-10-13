@@ -8,6 +8,7 @@ import com.example.demo.domain.project.domain.Project
 import com.example.demo.domain.project.domain.child.structure.BoundingBox
 import com.example.demo.domain.project.repository.FloorStructureRepository
 import com.example.demo.domain.project.repository.ProjectRepository
+import com.example.demo.domain.project.repository.RoomStructureRepository
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,6 +16,7 @@ class ProjectService(
     private val projectDomainService: ProjectDomainService,
     private val projectRepository: ProjectRepository,
     private val floorStructureRepository: FloorStructureRepository,
+    private val roomStructureRepository: RoomStructureRepository,
 ) {
     fun getByIdWithoutFloorplan(id: String): Project {
         return projectDomainService.getWithoutFloorplan(id)
