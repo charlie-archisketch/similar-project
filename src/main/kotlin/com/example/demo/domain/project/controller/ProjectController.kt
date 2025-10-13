@@ -1,5 +1,6 @@
 package com.example.demo.domain.project.controller
 
+import com.example.demo.domain.project.controller.dto.response.FloorResponse
 import com.example.demo.domain.project.controller.dto.response.ProjectResponse
 import com.example.demo.domain.project.service.ProjectService
 import org.springframework.http.ResponseEntity
@@ -31,17 +32,17 @@ class ProjectController(
 	}
 
     @PostMapping("/{projectId}/structure")
-    fun createFloorplanStructure(@PathVariable projectId: String): ResponseEntity<Unit> {
+    fun createStructure(@PathVariable projectId: String): ResponseEntity<Unit> {
         projectService.createFloorplanStructure(projectId)
 
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("/{projectId}/similar")
+    @GetMapping("/{floorId}/similar")
     fun getSimilarProjects(
-        @PathVariable projectId: String,
-    ): ResponseEntity<List<ProjectResponse>> {
-        val response = projectService.getSimilarProjects(projectId)
+        @PathVariable floorId: String,
+    ): ResponseEntity<List<FloorResponse>> {
+        val response = projectService.getSimilarProjects(floorId)
 
         return ResponseEntity.ok(response)
     }

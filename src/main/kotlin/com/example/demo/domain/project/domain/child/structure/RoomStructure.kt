@@ -1,4 +1,4 @@
-package com.example.demo.domain.project.domain.child.floorplan_structure
+package com.example.demo.domain.project.domain.child.structure
 
 data class RoomStructure(
     val roomCounts: Int,

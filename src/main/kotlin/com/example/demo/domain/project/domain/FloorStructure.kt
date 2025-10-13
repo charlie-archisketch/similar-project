@@ -1,27 +1,23 @@
 package com.example.demo.domain.project.domain
 
-import com.example.demo.domain.project.domain.child.floorplan_structure.BoundingBox
-import com.example.demo.global.util.StringUtil
+import com.example.demo.domain.project.domain.child.structure.BoundingBox
 import jakarta.persistence.*
 
 @Entity
-@Table(
-    name = "structures",
-    uniqueConstraints = [UniqueConstraint(name = "ux_structure_project", columnNames = ["project_id"])]
-)
-data class Structure(
+@Table(name = "floor_structures")
+data class FloorStructure(
 
     @Id
-    val id: String = StringUtil.genId(),
+    val id: String,
+
+    @Column(nullable = false)
+    val title: String,
 
     @Column(name = "project_id", nullable = false)
     val projectId: String,
 
     @Column(nullable = false)
     val area: Double,
-
-    @Column(nullable = false)
-    val floorCount: Int,
 
     @Embedded
     @AttributeOverrides(

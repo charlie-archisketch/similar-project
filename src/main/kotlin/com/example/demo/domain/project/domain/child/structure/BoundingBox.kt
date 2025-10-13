@@ -1,4 +1,4 @@
-package com.example.demo.domain.project.domain.child.floorplan_structure
+package com.example.demo.domain.project.domain.child.structure
 
 import com.example.demo.domain.project.domain.child.Floorplan
 import jakarta.persistence.Embeddable
