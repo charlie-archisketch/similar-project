@@ -104,4 +104,5 @@ tasks.withType<Test>().configureEach {
 
 kapt {
     keepJavacAnnotationProcessors = true
+    includeCompileClasspath = false
 }

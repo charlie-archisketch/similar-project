@@ -1,10 +1,11 @@
 package com.example.demo.domain.project.service
 
 import com.example.demo.domain.project.controller.dto.response.FloorResponse
-import com.example.demo.domain.project.controller.dto.response.FloorResponse.Companion.toResponse
 import com.example.demo.domain.project.controller.dto.response.ProjectResponse
+import com.example.demo.domain.project.controller.dto.response.RoomResponse
 import com.example.demo.domain.project.domain.FloorStructure
 import com.example.demo.domain.project.domain.Project
+import com.example.demo.domain.project.domain.RoomStructure
 import com.example.demo.domain.project.domain.child.structure.BoundingBox
 import com.example.demo.domain.project.repository.FloorStructureRepository
 import com.example.demo.domain.project.repository.ProjectRepository
@@ -48,7 +49,7 @@ class ProjectService(
 		}
 	}
 
-    fun getSimilarProjects(floorId: String): List<FloorResponse> {
+    fun getSimilarFloors(floorId: String): List<FloorResponse> {
         val floorStructure = floorStructureRepository.findById(floorId)
             .orElseThrow { NoSuchElementException() }
 
@@ -64,7 +65,7 @@ class ProjectService(
 
         return top10FloorStructure.mapNotNull {
             val project = projectMap[it.projectId] ?: return@mapNotNull null
-            toResponse(
+            FloorResponse.of(
                 project = project,
                 floorId = it.id,
                 floorName = it.title
@@ -72,7 +73,53 @@ class ProjectService(
         }
     }
 
-    fun createFloorplanStructure(projectId: String) {
+    fun getSimilarRooms(
+        roomId: String,
+        areaFrom: Int?,
+        areaTo: Int?,
+    ): List<RoomResponse> {
+        val roomStructure = roomStructureRepository.findById(roomId)
+            .orElseThrow { NoSuchElementException() }
+
+        val top10RoomStructure = if (roomStructure.type != 0) {
+            roomStructureRepository.findTopKSimilarRoomsByType(
+                excludeProjectId = roomStructure.projectId,
+                area = roomStructure.area,
+                areaFrom = areaFrom?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 0.85),
+                areaTo = areaTo?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 1.15),
+                rectangularity = roomStructure.rectangularity,
+                aspectRI = roomStructure.boundingBox.aspectRI,
+                type = roomStructure.type,
+                k = 10,
+            )
+        } else {
+            roomStructureRepository.findTopKSimilarRooms(
+                excludeProjectId = roomStructure.projectId,
+                area = roomStructure.area,
+                areaFrom = areaFrom?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 0.85),
+                areaTo = areaTo?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 1.15),
+                rectangularity = roomStructure.rectangularity,
+                aspectRI = roomStructure.boundingBox.aspectRI,
+                k = 10,
+            )
+        }
+
+        val projects = projectDomainService.getAllWithoutFloorplan(top10RoomStructure.map { it.projectId })
+        val projectMap = projects.associateBy { it._id }
+
+        return top10RoomStructure.mapNotNull {
+            val project = projectMap[it.projectId] ?: return@mapNotNull null
+            println(project.name)
+            println(it.score)
+            println()
+            RoomResponse.of(
+                project = project,
+                roomId = it.id,
+            )
+        }
+    }
+
+    fun createStructure(projectId: String) {
         val floorplans = projectDomainService.get(projectId).floorplans
 
         val floorStructures = floorplans.map {
@@ -81,10 +128,63 @@ class ProjectService(
                 title = it.title,
                 projectId = projectId,
                 area = it.area,
-                boundingBox = BoundingBox.fromFloorplan(it)
+                boundingBox = BoundingBox.fromFloorplan(it),
             )
         }
 
+        val roomStructures = floorplans.flatMap { floorplan ->
+            floorplan.rooms.map { room ->
+                val boundingBox = BoundingBox.fromRoom(floorplan, room)
+                RoomStructure(
+                    id = room.archiId,
+                    projectId = projectId,
+                    type = room.type,
+                    area = room.area,
+                    boundingBox = boundingBox,
+                    rectangularity = room.area / boundingBox.area,
+                )
+            }
+        }
+
         floorStructureRepository.saveAll(floorStructures)
+        roomStructureRepository.saveAll(roomStructures)
     }
+
+    fun createRecent100Structures() {
+        val ids = projectRepository.findRecentIds(100)
+
+        val projects = projectDomainService.getAll(ids)
+
+        val floorStructures = projects.flatMap { project ->
+            project.floorplans.map { fp ->
+                FloorStructure(
+                    id = fp.id,
+                    title = fp.title,
+                    projectId = project._id,
+                    area = fp.area,
+                    boundingBox = BoundingBox.fromFloorplan(fp),
+                )
+            }
+        }
+
+        val roomStructures = projects.flatMap { project ->
+            project.floorplans.flatMap { fp ->
+                fp.rooms.map { room ->
+                    val boundingBox = BoundingBox.fromRoom(fp, room)
+                    RoomStructure(
+                        id = room.archiId,
+                        projectId = project._id,
+                        type = room.type,
+                        area = room.area,
+                        boundingBox = boundingBox,
+                        rectangularity = if (boundingBox.area > 0.0) room.area / boundingBox.area else 0.0,
+                    )
+                }
+            }
+        }
+
+         floorStructureRepository.saveAll(floorStructures)
+         roomStructureRepository.saveAll(roomStructures)
+    }
+
 }

@@ -34,7 +34,7 @@ class FloorStructureRepositoryImpl(
             .where(floorStructure.projectId.ne(excludeProjectId))
             .orderBy(scoreExpr.asc())
             .limit(k.toLong())
-            .fetch();
+            .fetch()
     }
 }
 

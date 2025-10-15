@@ -70,7 +70,7 @@ public class ProjectDomainService {
         for (Project project: projects) {
             System.out.println(project.get_id());
             String floorplanPath = project.getFloorplanPath();
-            String key = "projects/"+ ids + "/floorplans.json";
+            String key = "projects/"+ project.get_id() + "/floorplans.json";
             if (!Strings.isNullOrEmpty(floorplanPath)) {
                 if (s3FileManager.isObjExist(key)) {
                     String floorplans;

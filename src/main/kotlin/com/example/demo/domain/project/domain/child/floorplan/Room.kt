@@ -19,5 +19,5 @@ data class Room(
     val visible: Boolean? = true,
     val items: List<Item> = emptyList(),
     val seats: Int = 0,
-    val area: Double? = null,
+    val area: Double,
 )

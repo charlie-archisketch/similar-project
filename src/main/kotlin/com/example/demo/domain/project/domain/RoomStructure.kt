@@ -1,26 +1,28 @@
 package com.example.demo.domain.project.domain
 
 import com.example.demo.domain.project.domain.child.structure.BoundingBox
-import jakarta.persistence.*
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
-@Table(name = "floor_structures")
-data class FloorStructure(
-
+@Table(name = "room_structures")
+data class RoomStructure(
     @Id
     val id: String,
-
-    @Column(nullable = false)
-    val title: String,
 
     @Column(name = "project_id", nullable = false)
     val projectId: String,
 
     @Column(nullable = false)
-    val area: Double,
+    val type: Int,
 
-//    @Column(nullable = false)
-//    val roomCount: Int,
+    @Column(nullable = false)
+    val area: Double,
 
     @Embedded
     @AttributeOverrides(
@@ -47,5 +49,5 @@ data class FloorStructure(
     )
     val boundingBox: BoundingBox,
 
-//    val orthogonality: Double, // 벽이 직각인 정도(0~1, 1에 가까울수록 직각에 가까움)의 평균
+    val rectangularity: Double,
 )

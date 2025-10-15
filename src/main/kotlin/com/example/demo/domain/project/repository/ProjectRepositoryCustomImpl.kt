@@ -3,6 +3,7 @@ package com.example.demo.domain.project.repository
 import com.archisketch.dashboard.domain.project.enums.ProjectState
 import com.example.demo.domain.project.domain.Project
 import org.bson.Document
+import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -53,4 +54,15 @@ class ProjectRepositoryCustomImpl(
 
 		return projects
 	}
+
+    override fun findRecentIds(limit: Int): List<String> {
+        val query = Query().apply {
+            fields().include("_id")
+            with(Sort.by(Sort.Direction.DESC, "updatedAt"))
+            limit(limit)
+        }
+
+        return mongoTemplate.find(query, Project::class.java, "projects")
+            .mapNotNull { it._id }
+    }
 }
