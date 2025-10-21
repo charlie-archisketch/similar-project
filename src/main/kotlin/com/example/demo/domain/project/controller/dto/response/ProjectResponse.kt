@@ -11,8 +11,9 @@ data class ProjectResponse(
     val enterpriseId: String? = null,
     val directoryIds: List<String> = emptyList(),
     val teamDirectoryIds: List<String> = emptyList(),
-    val coverImage: String? = null,
-    val defaultCoverImage: String? = null,
+    val coverImage: String,
+    val defaultCoverImage: String,
+    val floorplanPath: String,
     val state: Int? = null,
     val bookmark: Boolean = false,
     val createdAt: LocalDateTime = LocalDateTime.now(),
@@ -20,9 +21,8 @@ data class ProjectResponse(
 ) {
     companion object {
         @JvmStatic
-        fun toResponse(
+        fun from(
             project: Project,
-            bookmark: Boolean,
         ): ProjectResponse {
             return ProjectResponse(
                 _id = project._id,
@@ -31,15 +31,15 @@ data class ProjectResponse(
                 enterpriseId = project.enterpriseId,
                 directoryIds = project.directoryIds,
                 teamDirectoryIds = project.teamDirectoryIds,
-                coverImage = project.coverImage?.let { ImageConverter.convertImageUrl(imageUrl = it, width = 512) },
-                defaultCoverImage = project.defaultCoverImage?.let {
+                coverImage = project.coverImage.let { ImageConverter.convertImageUrl(imageUrl = it, width = 512) },
+                defaultCoverImage = project.defaultCoverImage.let {
                     ImageConverter.convertImageUrl(
                         imageUrl = it,
                         width = 512
                     )
                 },
+                floorplanPath = project.floorplanPath,
                 state = project.state,
-                bookmark = bookmark,
                 createdAt = project.createdAt,
                 updatedAt = project.updatedAt,
             )

@@ -37,13 +37,13 @@ public class ProjectDomainService {
             throw new Exception("Project [" + id + "] not found.");
         Project project = op.get();
         String floorplanPath = project.getFloorplanPath();
-        String key = "projects/"+ id + "/floorplans.json";
+        String key = project.getFloorplanKey();
         if (!Strings.isNullOrEmpty(floorplanPath)) {
             if (s3FileManager.isObjExist(key)) {
                 String floorplans;
                 try (HttpClient client = HttpClient.newHttpClient()) {
                     floorplans = client.send(
-                            HttpRequest.newBuilder(URI.create("https://dev-resources.archisketch.com/" + key))
+                            HttpRequest.newBuilder(URI.create(cdnUrl + "/" + key))
                                     .GET()
                                     .build(),
                             HttpResponse.BodyHandlers.ofString()
@@ -70,13 +70,13 @@ public class ProjectDomainService {
         for (Project project: projects) {
             System.out.println(project.get_id());
             String floorplanPath = project.getFloorplanPath();
-            String key = "projects/"+ project.get_id() + "/floorplans.json";
+            String key = project.getFloorplanKey();
             if (!Strings.isNullOrEmpty(floorplanPath)) {
                 if (s3FileManager.isObjExist(key)) {
                     String floorplans;
                     try (HttpClient client = HttpClient.newHttpClient()) {
                         floorplans = client.send(
-                                        HttpRequest.newBuilder(URI.create("https://dev-resources.archisketch.com/" + key))
+                                        HttpRequest.newBuilder(URI.create(cdnUrl + "/" + key))
                                                 .GET()
                                                 .build(),
                                         HttpResponse.BodyHandlers.ofString()
@@ -132,11 +132,7 @@ public class ProjectDomainService {
             if (project.getDefaultCoverImage() == null) {
                 project.setDefaultCoverImage(project.getCoverImage());
             }
-            save(project);
+            projectRepository.save(project);
         }
-    }
-
-    private Project save(Project project) {
-        return projectRepository.save(project);
     }
 }

@@ -19,6 +19,12 @@ class ProjectService(
     private val floorStructureRepository: FloorStructureRepository,
     private val roomStructureRepository: RoomStructureRepository,
 ) {
+    fun getById(id: String): ProjectResponse {
+        val project = projectDomainService.get(id)
+
+        return ProjectResponse.from(project)
+    }
+
     fun getByIdWithoutFloorplan(id: String): Project {
         return projectDomainService.getWithoutFloorplan(id)
             .orElseThrow{ NoSuchElementException() }
@@ -32,21 +38,7 @@ class ProjectService(
 			style = style,
 		)
 
-		return projects.map {
-			ProjectResponse(
-				_id = it._id,
-				userId = it.userId,
-				name = it.name,
-				enterpriseId = it.enterpriseId,
-				directoryIds = it.directoryIds,
-				teamDirectoryIds = it.teamDirectoryIds,
-				coverImage = it.coverImage,
-				defaultCoverImage = it.defaultCoverImage,
-				state = it.state,
-				createdAt = it.createdAt,
-				updatedAt = it.updatedAt,
-			)
-		}
+		return projects.map { ProjectResponse.from(it) }
 	}
 
     fun getSimilarFloors(floorId: String): List<FloorResponse> {
@@ -57,6 +49,7 @@ class ProjectService(
             excludeProjectId = floorStructure.projectId,
             area = floorStructure.area,
             aspectRI = floorStructure.boundingBox.aspectRI,
+            rectangularity = floorStructure.rectangularity,
             k = 10,
         )
 
@@ -123,12 +116,14 @@ class ProjectService(
         val floorplans = projectDomainService.get(projectId).floorplans
 
         val floorStructures = floorplans.map {
+            val boundingBox = BoundingBox.fromFloorplan(it)
             FloorStructure(
                 id = it.id,
                 title = it.title,
                 projectId = projectId,
                 area = it.area,
-                boundingBox = BoundingBox.fromFloorplan(it),
+                boundingBox = boundingBox,
+                rectangularity = if (boundingBox.area > 0.0) it.area * 1_000_000 / boundingBox.area else 0.0,
             )
         }
 
@@ -141,7 +136,7 @@ class ProjectService(
                     type = room.type,
                     area = room.area,
                     boundingBox = boundingBox,
-                    rectangularity = room.area / boundingBox.area,
+                    rectangularity = if (boundingBox.area > 0.0) room.area / boundingBox.area else 0.0,
                 )
             }
         }
@@ -156,21 +151,23 @@ class ProjectService(
         val projects = projectDomainService.getAll(ids)
 
         val floorStructures = projects.flatMap { project ->
-            project.floorplans.map { fp ->
+            project.floorplans.map { floorplan ->
+                val boundingBox = BoundingBox.fromFloorplan(floorplan)
                 FloorStructure(
-                    id = fp.id,
-                    title = fp.title,
+                    id = floorplan.id,
+                    title = floorplan.title,
                     projectId = project._id,
-                    area = fp.area,
-                    boundingBox = BoundingBox.fromFloorplan(fp),
+                    area = floorplan.area,
+                    boundingBox = boundingBox,
+                    rectangularity = if (boundingBox.area > 0.0) floorplan.area * 1_000_000 / boundingBox.area else 0.0,
                 )
             }
         }
 
         val roomStructures = projects.flatMap { project ->
-            project.floorplans.flatMap { fp ->
-                fp.rooms.map { room ->
-                    val boundingBox = BoundingBox.fromRoom(fp, room)
+            project.floorplans.flatMap { floorplan ->
+                floorplan.rooms.map { room ->
+                    val boundingBox = BoundingBox.fromRoom(floorplan, room)
                     RoomStructure(
                         id = room.archiId,
                         projectId = project._id,

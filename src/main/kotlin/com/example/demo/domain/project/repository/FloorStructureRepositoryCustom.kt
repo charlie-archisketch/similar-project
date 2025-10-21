@@ -5,6 +5,7 @@ interface FloorStructureRepositoryCustom {
         excludeProjectId: String,
         area: Double,
         aspectRI: Double,
-        k: Int
+        rectangularity: Double,
+        k: Int,
     ): List<FloorStructureResult>
 }

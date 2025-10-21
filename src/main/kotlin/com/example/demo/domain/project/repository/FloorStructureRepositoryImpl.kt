@@ -2,7 +2,6 @@ package com.example.demo.domain.project.repository
 
 import com.example.demo.domain.project.domain.QFloorStructure.floorStructure
 import com.querydsl.core.types.Projections
-import com.querydsl.core.types.dsl.NumberExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 
@@ -14,11 +13,17 @@ class FloorStructureRepositoryImpl(
         excludeProjectId: String,
         area: Double,
         aspectRI: Double,
-        k: Int
+        rectangularity: Double,
+        k: Int,
     ): List<FloorStructureResult> {
-        val scoreExpr: NumberExpression<Double> =
-            floorStructure.area.subtract(area).abs()
-                .add(floorStructure.boundingBox.aspectRI.subtract(aspectRI).abs())
+        val areaDist = floorStructure.area.subtract(area).abs().divide(area)
+        val aspectDist = floorStructure.boundingBox.aspectRI.subtract(aspectRI).abs().divide(0.3)
+        val rectangularityDist = floorStructure.rectangularity.subtract(rectangularity).abs().divide(0.1)
+
+        val scoreExpr =
+            areaDist.multiply(0.3)
+                .add(aspectDist.multiply(0.5))
+                .add(rectangularityDist.multiply(0.2))
 
         return queryFactory
             .select(
@@ -27,7 +32,7 @@ class FloorStructureRepositoryImpl(
                     floorStructure.id,
                     floorStructure.title,
                     floorStructure.projectId,
-                    scoreExpr
+                    scoreExpr,
                 )
             )
             .from(floorStructure)

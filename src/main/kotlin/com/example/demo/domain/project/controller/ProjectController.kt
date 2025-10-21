@@ -17,6 +17,15 @@ import org.springframework.web.bind.annotation.RestController
 class ProjectController(
     private val projectService: ProjectService,
 ) {
+    @GetMapping("/{projectId}")
+    fun getById(
+        @PathVariable projectId: String,
+    ): ResponseEntity<ProjectResponse> {
+        val response = projectService.getById(projectId)
+
+        return ResponseEntity.ok(response)
+    }
+
 	@GetMapping("/{projectId}/similar-by-address")
 	fun getSimilarProjectsByAddress(
         @PathVariable projectId: String,
@@ -38,7 +47,7 @@ class ProjectController(
     }
 
     @PostMapping("/structures")
-    fun createStructures(): ResponseEntity<Unit> {
+    fun createRecent100Structures(): ResponseEntity<Unit> {
         projectService.createRecent100Structures()
 
         return ResponseEntity.noContent().build()

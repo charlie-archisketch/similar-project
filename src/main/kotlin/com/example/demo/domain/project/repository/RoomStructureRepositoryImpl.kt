@@ -86,8 +86,8 @@ class RoomStructureRepositoryImpl(
                 roomStructure.type.eq(type),
                 roomStructure.area.between(areaFrom, areaTo),
                 roomStructure.rectangularity.between(
-                    roomStructure.rectangularity.subtract(0.1),
-                    roomStructure.rectangularity.add(0.1)
+                    rectangularity - 0.1,
+                    rectangularity + 0.1,
                 )
             )
             .orderBy(scoreExpr.asc())
