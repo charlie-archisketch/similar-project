@@ -5,10 +5,10 @@ import java.time.LocalDateTime
 
 data class FloorResponse(
     val _id: String,
+    val title: String,
+    val projectId: String,
+    val projectName: String,
     val userId: String,
-    val floorId: String,
-    val floorTitle: String,
-    val name: String,
     val coverImage: String? = null,
     val defaultCoverImage: String? = null,
     val state: Int? = null,
@@ -19,15 +19,15 @@ data class FloorResponse(
         @JvmStatic
         fun of(
             project: Project,
-            floorId: String,
-            floorName: String,
+            _id: String,
+            title: String,
         ): FloorResponse {
             return FloorResponse(
-                _id = project._id,
+                _id = _id,
+                title = title,
+                projectId = project._id,
+                projectName = project.name,
                 userId = project.userId,
-                floorId = floorId,
-                floorTitle = floorName,
-                name = project.name,
                 coverImage = project.coverImage,
                 defaultCoverImage = project.defaultCoverImage,
                 state = project.state,

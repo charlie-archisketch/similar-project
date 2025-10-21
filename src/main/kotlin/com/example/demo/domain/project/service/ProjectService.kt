@@ -60,8 +60,8 @@ class ProjectService(
             val project = projectMap[it.projectId] ?: return@mapNotNull null
             FloorResponse.of(
                 project = project,
-                floorId = it.id,
-                floorName = it.title
+                _id = it.id,
+                title = it.title
             )
         }
     }
@@ -107,7 +107,7 @@ class ProjectService(
             println()
             RoomResponse.of(
                 project = project,
-                roomId = it.id,
+                _id = it.id,
             )
         }
     }

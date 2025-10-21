@@ -18,10 +18,10 @@ data class RoomResponse(
         @JvmStatic
         fun of(
             project: Project,
-            roomId: String,
+            _id: String,
         ): RoomResponse {
             return RoomResponse(
-                id = roomId,
+                id = _id,
                 projectId = project._id,
                 projectName = project.name,
                 coverImage = project.coverImage,
