@@ -12,6 +12,8 @@ class FloorStructureRepositoryImpl(
     override fun findTopKSimilarFloors(
         excludeProjectId: String,
         area: Double,
+        areaFrom: Int,
+        areaTo: Int,
         aspectRI: Double,
         rectangularity: Double,
         k: Int,
@@ -36,7 +38,14 @@ class FloorStructureRepositoryImpl(
                 )
             )
             .from(floorStructure)
-            .where(floorStructure.projectId.ne(excludeProjectId))
+            .where(
+                floorStructure.projectId.ne(excludeProjectId),
+                floorStructure.area.between(areaFrom, areaTo),
+                floorStructure.rectangularity.between(
+                    rectangularity - 0.1,
+                    rectangularity + 0.1,
+                )
+            )
             .orderBy(scoreExpr.asc())
             .limit(k.toLong())
             .fetch()

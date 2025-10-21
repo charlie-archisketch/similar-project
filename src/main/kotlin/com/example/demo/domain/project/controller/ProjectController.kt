@@ -56,8 +56,14 @@ class ProjectController(
     @GetMapping("/{floorId}/similar-floor")
     fun getSimilarFloors(
         @PathVariable floorId: String,
+        @RequestParam(required = false) areaFrom: Int?,
+        @RequestParam(required = false) areaTo: Int?,
     ): ResponseEntity<List<FloorResponse>> {
-        val response = projectService.getSimilarFloors(floorId)
+        val response = projectService.getSimilarFloors(
+            floorId = floorId,
+            areaFrom = areaFrom,
+            areaTo = areaTo,
+        )
 
         return ResponseEntity.ok(response)
     }

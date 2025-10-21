@@ -19,9 +19,9 @@ class RoomStructureRepositoryImpl(
         k: Int,
     ): List<RoomStructureResult> {
         // Normalization
-        val areaDist = roomStructure.area.subtract(area).abs().divide(area + 1e6)
-        val aspectDist = roomStructure.boundingBox.aspectRI.subtract(aspectRI).divide(0.3)
-        val rectangularityDist = roomStructure.rectangularity.subtract(rectangularity).divide(0.1)
+        val areaDist = roomStructure.area.subtract(area).abs().divide(area)
+        val aspectDist = roomStructure.boundingBox.aspectRI.subtract(aspectRI).abs().divide(0.3)
+        val rectangularityDist = roomStructure.rectangularity.subtract(rectangularity).abs().divide(0.1)
 
         val scoreExpr =
             areaDist.multiply(0.3)
@@ -42,8 +42,8 @@ class RoomStructureRepositoryImpl(
                 roomStructure.projectId.ne(excludeProjectId),
                 roomStructure.area.between(areaFrom, areaTo),
                 roomStructure.rectangularity.between(
-                    roomStructure.rectangularity.subtract(0.1),
-                    roomStructure.rectangularity.add(0.1)
+                    rectangularity - 0.1,
+                    rectangularity + 0.1,
                 )
             )
             .orderBy(scoreExpr.asc())
@@ -62,9 +62,9 @@ class RoomStructureRepositoryImpl(
         k: Int,
     ): List<RoomStructureResult> {
         // Normalization
-        val areaDist = roomStructure.area.subtract(area).abs().divide(area + 1e6)
-        val aspectDist = roomStructure.boundingBox.aspectRI.subtract(aspectRI).divide(0.3)
-        val rectangularityDist = roomStructure.rectangularity.subtract(rectangularity).divide(0.1)
+        val areaDist = roomStructure.area.subtract(area).abs().divide(area)
+        val aspectDist = roomStructure.boundingBox.aspectRI.subtract(aspectRI).abs().divide(0.3)
+        val rectangularityDist = roomStructure.rectangularity.subtract(rectangularity).abs().divide(0.1)
 
         val scoreExpr =
             areaDist.multiply(0.3)

@@ -11,6 +11,7 @@ import com.example.demo.domain.project.repository.FloorStructureRepository
 import com.example.demo.domain.project.repository.ProjectRepository
 import com.example.demo.domain.project.repository.RoomStructureRepository
 import org.springframework.stereotype.Service
+import kotlin.math.roundToInt
 
 @Service
 class ProjectService(
@@ -41,13 +42,19 @@ class ProjectService(
 		return projects.map { ProjectResponse.from(it) }
 	}
 
-    fun getSimilarFloors(floorId: String): List<FloorResponse> {
+    fun getSimilarFloors(
+        floorId: String,
+        areaFrom: Int?,
+        areaTo: Int?,
+    ): List<FloorResponse> {
         val floorStructure = floorStructureRepository.findById(floorId)
             .orElseThrow { NoSuchElementException() }
 
         val top10FloorStructure = floorStructureRepository.findTopKSimilarFloors(
             excludeProjectId = floorStructure.projectId,
             area = floorStructure.area,
+            areaFrom = areaFrom ?: (floorStructure.area * 0.85).roundToInt(),
+            areaTo = areaTo ?: (floorStructure.area * 1.15).roundToInt(),
             aspectRI = floorStructure.boundingBox.aspectRI,
             rectangularity = floorStructure.rectangularity,
             k = 10,
@@ -78,8 +85,8 @@ class ProjectService(
             roomStructureRepository.findTopKSimilarRoomsByType(
                 excludeProjectId = roomStructure.projectId,
                 area = roomStructure.area,
-                areaFrom = areaFrom?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 0.85),
-                areaTo = areaTo?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 1.15),
+                areaFrom = areaFrom?.let { (it * 1_000_000).toDouble() } ?: (roomStructure.area * 0.85),
+                areaTo = areaTo?.let { (it * 1_000_000).toDouble() } ?: (roomStructure.area * 1.15),
                 rectangularity = roomStructure.rectangularity,
                 aspectRI = roomStructure.boundingBox.aspectRI,
                 type = roomStructure.type,
@@ -89,8 +96,8 @@ class ProjectService(
             roomStructureRepository.findTopKSimilarRooms(
                 excludeProjectId = roomStructure.projectId,
                 area = roomStructure.area,
-                areaFrom = areaFrom?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 0.85),
-                areaTo = areaTo?.let { (it * 1000).toDouble() } ?: (roomStructure.area * 1.15),
+                areaFrom = areaFrom?.let { (it * 1_000_000).toDouble() } ?: (roomStructure.area * 0.85),
+                areaTo = areaTo?.let { (it * 1_000_000).toDouble() } ?: (roomStructure.area * 1.15),
                 rectangularity = roomStructure.rectangularity,
                 aspectRI = roomStructure.boundingBox.aspectRI,
                 k = 10,
