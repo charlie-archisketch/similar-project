@@ -1,6 +1,6 @@
 package com.example.demo.domain.project.domain.child.floorplan;
 
-import com.archisketch.dashboard.domain.project.enums.FinishTargetType;
+import com.example.demo.domain.project.domain.enums.FinishTargetType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

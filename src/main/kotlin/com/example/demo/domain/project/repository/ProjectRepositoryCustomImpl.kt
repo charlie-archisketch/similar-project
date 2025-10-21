@@ -1,6 +1,6 @@
 package com.example.demo.domain.project.repository
 
-import com.archisketch.dashboard.domain.project.enums.ProjectState
+import com.example.demo.domain.project.domain.enums.ProjectState
 import com.example.demo.domain.project.domain.Project
 import org.bson.Document
 import org.springframework.data.domain.Sort

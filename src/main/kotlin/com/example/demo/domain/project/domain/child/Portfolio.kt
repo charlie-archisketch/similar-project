@@ -1,6 +1,6 @@
 package com.example.demo.domain.project.domain.child
 
-import com.archisketch.dashboard.domain.project.enums.ShowFloorplan
+import com.example.demo.domain.project.domain.enums.ShowFloorplan
 import org.springframework.data.annotation.Id
 import java.time.LocalDateTime
 

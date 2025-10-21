@@ -2,12 +2,14 @@ package com.example.demo.domain.project.domain.child.floorplan;
 
 import com.example.demo.global.Transformation;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 import java.util.List;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class Item {
 
   private String archiId;
@@ -47,10 +49,6 @@ public class Item {
 
   @Nullable
   private List<MaterialSnapshot> activedMaterials;
-
-  public Item() {
-
-  }
 
   public Item(
 	  String archiId, String productId, String groupId, Object meta, String parametricInfo, Transformation position,

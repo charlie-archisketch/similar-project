@@ -102,14 +102,6 @@ public class Project implements Cloneable {
 		}
 	}
 
-	public void setCoverImage(String coverImage) {
-		if (coverImage != null) {
-			this.coverImage = coverImage.trim();
-		} else {
-			this.coverImage = null;
-		}
-	}
-
 	public String getFloorplanKey() {
 		return "projects/" + _id + "/floorplans.json";
 	}

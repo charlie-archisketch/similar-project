@@ -1,4 +1,4 @@
-package com.archisketch.dashboard.domain.project.enums
+package com.example.demo.domain.project.domain.enums
 
 enum class ProjectState(
     val value: Int,
